@@ -1,0 +1,56 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TFC-Scripting | Faction Invite</title>
+
+    <script src="https://cdn.tailwindcss.com/" defer></script>
+</head>
+
+<body class="bg-slate-900 bg-opacity-50 antialiased">
+    <div class="flex flex-col items-center justify-center h-screen">
+        <div class="flex flex-col items-center justify-center w-1/2 h-1/2 bg-slate-900 bg-opacity-50 rounded-lg">
+            <label for="invitee" class="text-white">Player Name:</label>
+            <input type="text" name="invitee" id="invitee" class="w-full md:w-1/2 h-10 bg-slate-800 rounded-lg text-white">
+            <button type="submit" class="w-full md:w-1/2 h-10 bg-slate-800 rounded-lg text-white mt-2 md:mt-0">Invite</button>
+
+            <!-- Placeholder for Invited or Error Text -->
+            <div id="inviteStatus" class="bg-slate-800 bg-opacity-50 rounded-lg text-white hidden transition duration-500 ease-in-out mt-2"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('inviteButton').addEventListener('click', function () {
+            const invitee = document.getElementById('invitee').value;
+            if (invitee) {
+                // Send the invite data to the server.
+                fetch(`https://${GetParentResourceName()}/invite`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ invitee })
+                }).then(response => {
+                    if (response.ok) {
+                        // Update the UI to reflect the invite was sent.
+                        document.getElementById('inviteStatus').classList.remove('hidden');
+                        document.getElementById('inviteStatus').classList.add('bg-green-500');
+                        document.getElementById('inviteStatus').innerHTML = 'Invite Sent!';
+                    } else {
+                        // Update the UI to reflect the invite failed.
+                        document.getElementById('inviteStatus').classList.remove('hidden');
+                        document.getElementById('inviteStatus').classList.add('bg-red-500');
+                        document.getElementById('inviteStatus').innerHTML = 'Invite Failed!';
+                    }
+                }).then(data => {}).catch(error => {
+                    console.error('Error while sending invite:', error);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
